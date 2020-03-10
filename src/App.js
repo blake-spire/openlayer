@@ -2,25 +2,7 @@ import React from "react";
 import Draw from "ol/interaction/Draw";
 import { Vector as VectorSource } from "ol/source";
 
-import { getStaticImageMap, getLayer } from "./utils";
-
-const imgSrc = "http://localhost:8081/dl/5d24c2a0-68ce-4f8c-a534-fbc9e4bdbef8";
-
-function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-
-    img.addEventListener("load", () => {
-      return resolve(img);
-    });
-
-    img.addEventListener("error", () => {
-      return reject("cannot load image");
-    });
-
-    img.src = src;
-  });
-}
+import { getStaticImageMap, getLayer } from "../utils";
 
 class App extends React.Component {
   ref = React.createRef();

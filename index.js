@@ -3,47 +3,60 @@ import Map from "ol/Map";
 import View from "ol/View";
 import Draw from "ol/interaction/Draw";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
-import { OSM, Vector as VectorSource } from "ol/source";
+import { Cluster, OSM, Vector as VectorSource } from "ol/source";
 
-var raster = new TileLayer({
+const raster = new TileLayer({
   source: new OSM()
 });
+const source = new VectorSource({ wrapX: false });
+const draw = new Draw({
+  source: source,
+  type: "Point"
+});
 
-var source = new VectorSource({ wrapX: false });
-
-var vector = new VectorLayer({
+const vector = new VectorLayer({
+  source: source
+});
+const clusterSource = new Cluster({
   source: source
 });
 
-var map = new Map({
-  layers: [raster, vector],
+var styleCache = {};
+const clusters = new VectorLayer({
+  source: clusterSource,
+  style: function(feature) {
+    var size = feature.get("features").length;
+    var style = styleCache[size];
+    if (!style) {
+      style = new Style({
+        image: new CircleStyle({
+          radius: 10,
+          stroke: new Stroke({
+            color: "#fff"
+          }),
+          fill: new Fill({
+            color: "#3399CC"
+          })
+        }),
+        text: new Text({
+          text: size.toString(),
+          fill: new Fill({
+            color: "#fff"
+          })
+        })
+      });
+      styleCache[size] = style;
+    }
+    return style;
+  }
+});
+
+const map = new Map({
+  layers: [raster, vector, clusters],
   target: "map",
   view: new View({
     center: [-11000000, 4600000],
     zoom: 4
   })
 });
-
-var typeSelect = document.getElementById("type");
-
-var draw; // global so we can remove it later
-function addInteraction() {
-  var value = typeSelect.value;
-  if (value !== "None") {
-    draw = new Draw({
-      source: source,
-      type: typeSelect.value
-    });
-    map.addInteraction(draw);
-  }
-}
-
-/**
- * Handle change event.
- */
-typeSelect.onchange = function() {
-  map.removeInteraction(draw);
-  addInteraction();
-};
-
-addInteraction();
+map.addInteraction(draw);

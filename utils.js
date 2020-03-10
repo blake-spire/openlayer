@@ -8,6 +8,8 @@ import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { Style, Fill, Stroke, Text } from "ol/style";
 
+const imgSrc = "http://localhost:8081/dl/5d24c2a0-68ce-4f8c-a534-fbc9e4bdbef8";
+
 function getImageDimensions(img) {
   return {
     width: img.naturalWidth,
@@ -176,4 +178,20 @@ export function getLayer() {
   layer.setZIndex(1);
 
   return layer;
+}
+
+export function loadImage() {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.addEventListener("load", () => {
+      return resolve(img);
+    });
+
+    img.addEventListener("error", () => {
+      return reject("cannot load image");
+    });
+
+    img.src = imgSrc;
+  });
 }
