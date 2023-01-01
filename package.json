@@ -6,7 +6,7 @@
     "ol": "^5.3.3"
   },
   "devDependencies": {
-    "parcel": "^1.12.4"
+    "parcel": "^2.8.2"
   },
   "scripts": {
     "start": "parcel index.html",
